@@ -270,12 +270,6 @@ namespace GenericBoson
 		return sendResult;
 	}
 
-	void Server::Send(ExpandedOverlapped* pEol)
-	{
-		std::scoped_lock lock(m_sendLock);
-		m_sendQueues[pEol->m_socket].push(pEol);
-	}
-
 	void Server::SendThreadFunction()
 	{
 		using namespace std::chrono_literals;

@@ -14,6 +14,6 @@ namespace GenericBoson
 		HeartBeat(const int64_t periodMs) : ITimer(periodMs) {}
 		void OnTime() override;
 	private:
-		//std::weak_ptr<Common> m_wpOwner;
+		std::weak_ptr<Common> m_wpOwner;
 	};
 }

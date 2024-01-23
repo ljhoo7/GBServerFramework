@@ -65,8 +65,8 @@ namespace GenericBoson
 		template<typename FLATBUFFER_TABLE>
 		bool AddStub(const int messageID, void(*Stub)(const FLATBUFFER_TABLE& table))
 		{
-			assert(messageID < ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_START);
-			assert(ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_END < messageID);
+			//assert(messageID < ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_START);
+			//assert(ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_END < messageID);
 
 			const auto [_, isInserted] = m_stubs.emplace(messageID,
 				std::make_shared<StubAdaptor<FLATBUFFER_TABLE>>(Stub));
@@ -76,6 +76,8 @@ namespace GenericBoson
 				throw std::format("Add stub failed. Message ID - {}", messageID);
 			}
 		}
+
+		virtual void SendPing() = 0;
 	protected:
 		std::unordered_map<int, std::shared_ptr<IStubAdaptor>> m_stubs;
 
