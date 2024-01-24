@@ -2,6 +2,7 @@
 
 #include "Server.h"
 #include "../Shared/HeartBeat.h"
+#include "../flatbufferschema/internal_generated.h"
 
 namespace GenericBoson
 {
@@ -300,9 +301,14 @@ namespace GenericBoson
 		}
 	}
 
+	void PongStub(const GenericBoson::GameInternal::PingPong& ping)
+	{
+		std::cout << "pong received : " << ping.num() << std::endl;
+	}
+
 	void Server::OnConnected(ExpandedOverlapped* pEol)
 	{
-		//AddStub(1, PongStub);
+		AddStub(1, PongStub);
 
 		const auto pTimer = std::make_shared<HeartBeat>(1000);
 		TimerManager::GetInstance()->AddTimer(pTimer);
@@ -318,6 +324,13 @@ namespace GenericBoson
 	)
 	{
 		m_connectedTask = task;
+	}
+
+	void Server::SendPing(ExpandedOverlapped& pEol)
+	{
+		Send(&pEol, 1, [](auto& fbb) {
+				return CreatePingPong(fbb, 777);
+			});
 	}
 
 	ThreadSafeBufferAllocator Server::g_bufferAllocator;

@@ -49,30 +49,6 @@ namespace GenericBoson
 		}
 
 		template<typename CALLABLE>
-		bool Send(const int32_t messageID, CALLABLE&& callable)
-		{
-
-			return Send();
-		}
-
-		void SetConnectedTask(const std::function<void(ExpandedOverlapped* pEol)>& task);
-	protected:
-		void OnConnected(ExpandedOverlapped* pEol);
-
-		//// \return true - all completed, false - not yet gathering completed.
-		//virtual bool OnReceived(ExpandedOverlapped* pEol, DWORD receivedBytes) = 0;
-		//virtual bool OnSent(ExpandedOverlapped* pEol, DWORD sentBytes) = 0;
-		int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
-		int IssueSend(ExpandedOverlapped* pEol, const unsigned long throttling = 30);//(std::numeric_limits<unsigned long>::max)());
-	private:
-		std::pair<bool, std::string> SetListeningSocket();
-		void SendThreadFunction();
-
-		void ThreadFunction();
-
-		virtual void SendPing() override;
-
-		template<typename CALLABLE>
 		bool Send(ExpandedOverlapped* pEol, const int32_t messageID,
 			CALLABLE&& callable)
 		{
@@ -111,6 +87,24 @@ namespace GenericBoson
 
 			return true;
 		};
+
+		void SetConnectedTask(const std::function<void(ExpandedOverlapped* pEol)>& task);
+	protected:
+		void OnConnected(ExpandedOverlapped* pEol);
+
+		//// \return true - all completed, false - not yet gathering completed.
+		//virtual bool OnReceived(ExpandedOverlapped* pEol, DWORD receivedBytes) = 0;
+		//virtual bool OnSent(ExpandedOverlapped* pEol, DWORD sentBytes) = 0;
+		int IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive);
+		int IssueSend(ExpandedOverlapped* pEol, const unsigned long throttling = 30);//(std::numeric_limits<unsigned long>::max)());
+	private:
+		std::pair<bool, std::string> SetListeningSocket();
+		void SendThreadFunction();
+
+		void ThreadFunction();
+
+		virtual void SendPing(ExpandedOverlapped& pEol) override;
+
 	private:
 		int m_threadPoolSize = 0;
 		std::vector<std::thread> m_threadPool;

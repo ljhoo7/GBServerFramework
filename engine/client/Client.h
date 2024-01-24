@@ -16,6 +16,8 @@ namespace GenericBoson
 		bool GetKeepLooping();
 
 		int Connect(const std::string_view address, const int port);
+
+		virtual void SendPing(ExpandedOverlapped& pEol) override;
 	private:
 		int InitializeWinSock();
 		int CreateSocket();

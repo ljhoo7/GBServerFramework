@@ -131,4 +131,9 @@ namespace GenericBoson
 
 		return 0;
 	}
+
+	void Client::SendPing(ExpandedOverlapped& pEol)
+	{
+
+	}
 }

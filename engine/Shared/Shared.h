@@ -10,6 +10,8 @@
 
 namespace GenericBoson
 {
+	struct ExpandedOverlapped;
+
 	typedef size_t BUFFER_SIZE_TYPE;
 	constexpr BUFFER_SIZE_TYPE BUFFER_SIZE = 8 * 1024 + 200;
 
@@ -77,7 +79,7 @@ namespace GenericBoson
 			}
 		}
 
-		virtual void SendPing() = 0;
+		virtual void SendPing(ExpandedOverlapped& pEol) = 0;
 	protected:
 		std::unordered_map<int, std::shared_ptr<IStubAdaptor>> m_stubs;
 
