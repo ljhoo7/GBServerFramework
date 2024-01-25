@@ -2,8 +2,10 @@
 
 #include "Client.h"
 #include "../server/Util.h"
+#include "../flatbufferschema/internal_generated.h"
 
 #include <string_view>
+#include <iostream>
 
 namespace GenericBoson
 {
@@ -129,7 +131,19 @@ namespace GenericBoson
 		FD_SET(m_socket, &m_reads);
 		FD_SET(m_socket, &m_writes);
 
+		OnConnected();
+		
 		return 0;
+	}
+
+	void PongStub(const GenericBoson::GameInternal::PingPong& ping)
+	{
+		std::cout << "pong received : " << ping.num() << std::endl;
+	}
+
+	void Client::OnConnected()
+	{
+		AddStubInternal(ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_START, PongStub);
 	}
 
 	void Client::SendPing(ExpandedOverlapped& pEol)

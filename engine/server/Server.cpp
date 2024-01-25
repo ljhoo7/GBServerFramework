@@ -215,12 +215,18 @@ namespace GenericBoson
 			{
 				bool ret = OnSent(pEol->m_outputData, transferredBytes);
 
-				// 소켓 닫기
-				//closesocket(pEol->m_socket);
+				std::lock_guard<std::mutex> lock(m_sendLock);
+				m_emptyQueues[pEol->m_socket].push(pEol);
 			}
 			break;
 			}
 		}
+	}
+
+	ExpandedOverlapped* Server::GetExpandedOverlappedToSend()
+	{
+		std::lock_guard<std::mutex> lock(m_sendLock);
+		//m_emptyQueues
 	}
 
 	int Server::IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive)
@@ -308,7 +314,7 @@ namespace GenericBoson
 
 	void Server::OnConnected(ExpandedOverlapped* pEol)
 	{
-		AddStub(1, PongStub);
+		AddStubInternal(ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_START, PongStub);
 
 		const auto pTimer = std::make_shared<HeartBeat>(1000);
 		TimerManager::GetInstance()->AddTimer(pTimer);
@@ -328,8 +334,8 @@ namespace GenericBoson
 
 	void Server::SendPing(ExpandedOverlapped& pEol)
 	{
-		Send(&pEol, 1, [](auto& fbb) {
-				return CreatePingPong(fbb, 777);
+		Send(&pEol, ENGINE_RESERVED_PROTOCOL_NUMBER_RANGE_START, [](auto& fbb) {
+				return GenericBoson::GameInternal::CreatePingPong(fbb, 777);
 			});
 	}
 

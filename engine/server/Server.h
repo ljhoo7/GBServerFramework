@@ -80,8 +80,6 @@ namespace GenericBoson
 
 			pEol->m_outputData.m_offset = tableSize + sizeof(messageID) + sizeof(tableSize);
 
-			Send(pEol);
-
 			std::scoped_lock lock(m_sendLock);
 			m_sendQueues[pEol->m_socket].push(pEol);
 
@@ -103,6 +101,8 @@ namespace GenericBoson
 
 		void ThreadFunction();
 
+		ExpandedOverlapped* GetExpandedOverlappedToSend();
+
 		virtual void SendPing(ExpandedOverlapped& pEol) override;
 
 	private:
@@ -112,7 +112,9 @@ namespace GenericBoson
 
 		// #ToDo lock free circular queue
 		std::mutex m_sendLock;
-		std::unordered_map<SOCKET, std::queue<ExpandedOverlapped*>> m_sendQueues;
+		
+		using SendQueuesType = std::unordered_map<SOCKET, std::queue<ExpandedOverlapped*>>;
+		SendQueuesType m_sendQueues, m_emptyQueues;
 		std::vector<ExpandedOverlapped> m_sessions;
 
 		WSADATA m_wsaData;
