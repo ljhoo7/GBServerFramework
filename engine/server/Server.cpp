@@ -223,10 +223,11 @@ namespace GenericBoson
 		}
 	}
 
-	ExpandedOverlapped* Server::GetExpandedOverlappedToSend()
+	ExpandedOverlapped* Server::GetExpandedOverlappedToSend(const SOCKET socket)
 	{
 		std::lock_guard<std::mutex> lock(m_sendLock);
-		//m_emptyQueues
+		auto poped = m_emptyQueues[socket].front();
+		m_emptyQueues[socket].pop();
 	}
 
 	int Server::IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive)
@@ -284,7 +285,7 @@ namespace GenericBoson
 		int focusIndex = 0;
 		while (m_keepLooping)
 		{
-			for (auto& [_, itSendQueue] : m_sendQueues)
+			for (auto& [socket, itSendQueue] : m_sendQueues)
 			{
 				ExpandedOverlapped* pEol = nullptr;
 				{
@@ -300,6 +301,11 @@ namespace GenericBoson
 				if (pEol)
 				{
 					IssueSend(pEol);
+				}
+
+				{
+					std::scoped_lock lock(m_sendLock);
+					m_emptyQueues[socket].push(pEol);
 				}
 			}
 

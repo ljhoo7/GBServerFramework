@@ -101,7 +101,7 @@ namespace GenericBoson
 
 		void ThreadFunction();
 
-		ExpandedOverlapped* GetExpandedOverlappedToSend();
+		ExpandedOverlapped* GetExpandedOverlappedToSend(const SOCKET socket);
 
 		virtual void SendPing(ExpandedOverlapped& pEol) override;
 
