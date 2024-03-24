@@ -228,6 +228,8 @@ namespace GenericBoson
 		std::lock_guard<std::mutex> lock(m_sendLock);
 		auto poped = m_emptyQueues[socket].front();
 		m_emptyQueues[socket].pop();
+
+		return poped;
 	}
 
 	int Server::IssueRecv(ExpandedOverlapped* pEol, ULONG lengthToReceive)
